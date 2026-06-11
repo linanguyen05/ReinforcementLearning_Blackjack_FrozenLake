@@ -1,4 +1,4 @@
-# Reinforcement Learning — Blackjack & FrozenLake
+# Reinforcement Learning - Blackjack & FrozenLake
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-1.1-0081A5?logo=openaigym&logoColor=white)](https://gymnasium.farama.org)
