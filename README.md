@@ -4,7 +4,7 @@
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-1.1-0081A5?logo=openaigym&logoColor=white)](https://gymnasium.farama.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Train AI agents to play **Blackjack** and navigate **FrozenLake** using **Tabular Q-Learning** — a foundational Reinforcement Learning algorithm. Built with OpenAI's [Gymnasium](https://gymnasium.farama.org/) library.
+Train AI agents to play **Blackjack** and navigate **FrozenLake** using **Tabular Q-Learning** - a foundational Reinforcement Learning algorithm. Built with OpenAI's [Gymnasium](https://gymnasium.farama.org/) library.
 
 <p align="center">
   <img src="outputs/blackjack_policy_no_usable_ace.png" width="48%"/>
@@ -79,7 +79,7 @@ The agent learns when to **Hit** or **Stick** based on its current hand, the dea
 
 ### Results
 
-After training, the agent achieves a **~43–47% win rate** (excluding draws) — near-optimal for Blackjack, where the house always has a statistical edge.
+After training, the agent achieves a **~43–47% win rate** (excluding draws) - near-optimal for Blackjack, where the house always has a statistical edge.
 
 <details>
 <summary>Training Progress</summary>
@@ -89,14 +89,14 @@ After training, the agent achieves a **~43–47% win rate** (excluding draws) �
 </details>
 
 <details>
-<summary>Learned Policy — Without Usable Ace</summary>
+<summary>Learned Policy - Without Usable Ace</summary>
 
 ![Policy No Ace](outputs/blackjack_policy_no_usable_ace.png)
 
 </details>
 
 <details>
-<summary>Learned Policy — With Usable Ace</summary>
+<summary>Learned Policy - With Usable Ace</summary>
 
 ![Policy Ace](outputs/blackjack_policy_usable_ace.png)
 
@@ -108,7 +108,7 @@ The learned policies closely match the theoretical **basic strategy** from Sutto
 
 ## FrozenLake Agent
 
-The agent learns to navigate a grid of frozen tiles (`F`), holes (`H`), a start (`S`), and a goal (`G`) — finding the safest path to the goal.
+The agent learns to navigate a grid of frozen tiles (`F`), holes (`H`), a start (`S`), and a goal (`G`) - finding the safest path to the goal.
 
 ### Hyperparameters
 
@@ -173,17 +173,17 @@ Trained across **4 map sizes** to study how Q-Learning scales with state space:
 
 ## Tech Stack
 
-- **[Gymnasium](https://gymnasium.farama.org/)** — RL environment framework (successor to OpenAI Gym)
-- **[NumPy](https://numpy.org/)** — Q-table storage and numerical operations
-- **[Matplotlib](https://matplotlib.org/) + [Seaborn](https://seaborn.pydata.org/)** — Visualization (policy heatmaps, training curves)
-- **[pandas](https://pandas.pydata.org/)** — Results aggregation across runs
-- **[tqdm](https://tqdm.github.io/)** — Progress bars
+- **[Gymnasium](https://gymnasium.farama.org/)** - RL environment framework (successor to OpenAI Gym)
+- **[NumPy](https://numpy.org/)** - Q-table storage and numerical operations
+- **[Matplotlib](https://matplotlib.org/) + [Seaborn](https://seaborn.pydata.org/)** - Visualization (policy heatmaps, training curves)
+- **[pandas](https://pandas.pydata.org/)** - Results aggregation across runs
+- **[tqdm](https://tqdm.github.io/)** - Progress bars
 
 ---
 
 ## References
 
-- Sutton & Barto — *Reinforcement Learning: An Introduction* (2018)
+- Sutton & Barto - *Reinforcement Learning: An Introduction* (2018)
 - [Gymnasium Blackjack Tutorial](https://gymnasium.farama.org/tutorials/training_agents/blackjack_q_learning/)
 - [Gymnasium FrozenLake Docs](https://gymnasium.farama.org/environments/toy_text/frozen_lake/)
 
