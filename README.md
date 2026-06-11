@@ -1,80 +1,189 @@
-# Lab: Reinforcement Learning - Blackjack và FrozenLake
+# Reinforcement Learning — Blackjack & FrozenLake
 
-**Họ tên:** Nguyễn Lâm Anh
-**MSSV:** SE194272
-**Môn học:** REL301m
-**Kỳ:** Summer 2026
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
+[![Gymnasium](https://img.shields.io/badge/Gymnasium-1.1-0081A5?logo=openaigym&logoColor=white)](https://gymnasium.farama.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Mô tả
+Train AI agents to play **Blackjack** and navigate **FrozenLake** using **Tabular Q-Learning** — a foundational Reinforcement Learning algorithm. Built with OpenAI's [Gymnasium](https://gymnasium.farama.org/) library.
 
-Bài lab huấn luyện agent chơi 2 game Blackjack và FrozenLake bằng thuật toán Tabular Q-Learning, sử dụng thư viện Gymnasium. Công thức cập nhật Q-value:
+<p align="center">
+  <img src="outputs/blackjack_policy_no_usable_ace.png" width="48%"/>
+  <img src="outputs/frozenlake_4x4_policy.png" width="48%"/>
+</p>
+
+---
+
+## Overview
+
+This project implements two classic RL environments to demonstrate how a Q-Learning agent discovers optimal strategies through trial-and-error:
+
+| Environment    | State Space                             | Action Space    | Goal                                        |
+| -------------- | --------------------------------------- | --------------- | ------------------------------------------- |
+| **Blackjack**  | `(player_sum, dealer_card, usable_ace)` | `Hit` / `Stick` | Beat the dealer without going over 21       |
+| **FrozenLake** | Grid position (integer)                 | `←` `↓` `→` `↑` | Navigate from Start to Goal, avoiding Holes |
+
+### Q-Learning Update Rule
 
 ```
-Q(s, a) = Q(s, a) + alpha * [R + gamma * max Q(s', a') - Q(s, a)]
+Q(s, a) ← Q(s, a) + α · [R + γ · max Q(s', a') − Q(s, a)]
 ```
 
+Where `α` = learning rate, `γ` = discount factor, `R` = immediate reward.
 
-## Bài 1: Blackjack
+---
 
-### Tham số huấn luyện
+## Quick Start
 
-| Tham số         | Giá trị                                          |
-| --------------- | ------------------------------------------------ |
-| Learning rate   | 0.01                                             |
-| Discount factor | 0.95                                             |
-| Số episodes     | 100,000                                          |
-| Epsilon         | 1.0 giảm dần xuống 0.1 trong 50,000 episodes đầu |
+### Prerequisites
 
-### Nhận xét kết quả
+- Python 3.10+
+- pip
 
-Agent đạt **win rate khoảng 43-47%** (không tính hòa) sau 100,000 episodes huấn luyện. Kết quả này hợp lý vì bản chất Blackjack là game bất lợi cho người chơi - nhà cái luôn có lợi thế thống kê (house edge). Win rate tầm 47% đã gần sát với basic strategy tối ưu.
+### Installation
 
-Nhìn vào biểu đồ **Training Progress**, reward trung bình tăng dần từ -0.5 lên khoảng -0.1 trong suốt quá trình huấn luyện, cho thấy agent cải thiện đều đặn. TD Error cũng hội tụ dần về 0, nghĩa là Q-values đã ổn định.
+```bash
+# Clone the repository
+git clone https://github.com/linanguyen05/ReinforcementLearning_Blackjack_FrozenLake.git
+cd ReinforcementLearning_Blackjack_FrozenLake
 
-Về **policy đã học được**:
+# Install dependencies
+pip install gymnasium numpy matplotlib seaborn tqdm pandas
+```
 
-- Trường hợp **không có usable ace**: agent học được Stick khi tổng >= 17-18 (tùy bài dealer), Hit khi tổng thấp. Khi dealer show bài nhỏ (2-6), agent dừng sớm hơn vì dealer có xác suất bust cao. Khi dealer show bài lớn (7-10, A), agent phải hit nhiều hơn.
-- Trường hợp **có usable ace**: agent hit mạnh tay hơn (đến khoảng 17-18) vì có ace làm "lưới an toàn" - nếu bust thì ace tự chuyển từ 11 xuống 1.
+### Run the Agents
 
-Cả 2 policy đều khớp với lý thuyết basic strategy trong sách Sutton & Barto, chứng tỏ Q-Learning đã hội tụ đúng.
+```bash
+# Train Blackjack agent
+python code/blackjack_qlearning.py
 
+# Train FrozenLake agent (runs on 4x4, 7x7, 9x9, 11x11 maps)
+python code/frozenlake_qlearning.py
+```
 
-## Bài 2: FrozenLake
+All output charts are saved to the `outputs/` directory automatically.
 
-### Tham số huấn luyện
+---
 
-| Tham số         | Giá trị                 |
-| --------------- | ----------------------- |
-| Learning rate   | 0.8                     |
-| Discount factor | 0.95                    |
-| Epsilon         | 0.1 (cố định)           |
-| Số episodes/map | 2,000                   |
-| Số runs/map     | 20 (lấy trung bình)     |
-| Map sizes       | 4x4, 7x7, 9x9, 11x11    |
-| Slippery        | Tắt (is_slippery=False) |
+## Blackjack Agent
 
-### Nhận xét kết quả
+The agent learns when to **Hit** or **Stick** based on its current hand, the dealer's visible card, and whether it holds a usable Ace.
 
-Em chạy trên 4 kích thước map khác nhau để so sánh khả năng học của agent khi state space tăng dần.
+### Hyperparameters
 
-**Map 4x4 (16 states):** Agent hội tụ rất nhanh, chỉ sau vài trăm episodes đã tìm được đường tối ưu đến Goal. Policy heatmap cho thấy các mũi tên hướng rõ ràng về đích, tránh hố. Win rate cao. Biểu đồ cumulated rewards tăng gần như tuyến tính, chứng tỏ agent thắng đều đặn mỗi episode.
+| Parameter           | Value                                              |
+| ------------------- | -------------------------------------------------- |
+| Learning rate (α)   | `0.01`                                             |
+| Discount factor (γ) | `0.95`                                             |
+| Episodes            | `100,000`                                          |
+| Epsilon             | `1.0 → 0.1` (linear decay over first 50k episodes) |
 
-**Map 7x7 (49 states):** Vẫn học tốt nhưng chậm hơn 4x4. Nhìn policy heatmap thấy agent biết đi vòng tránh các Hole, chọn đường an toàn dù không phải đường ngắn nhất. Cumulated rewards vẫn tăng đều.
+### Results
 
-**Map 9x9 (81 states):** Bắt đầu thấy rõ sự khó khăn. Agent cần nhiều episodes hơn để explore hết các state. Cumulated rewards tăng chậm hơn, average steps giảm chậm hơn so với 2 map nhỏ.
+After training, the agent achieves a **~43–47% win rate** (excluding draws) — near-optimal for Blackjack, where the house always has a statistical edge.
 
-**Map 11x11 (121 states):** Win rate = 0%. Nguyên nhân chính là 2,000 episodes không đủ cho state space 121 ô. Với epsilon cố định 0.1, agent không explore đủ các trạng thái xa, dẫn đến Q-values ở nhiều ô vẫn bằng 0. Để cải thiện có thể tăng episodes lên 10,000-20,000 hoặc áp dụng epsilon decay giống bài Blackjack.
+<details>
+<summary>Training Progress</summary>
 
-Nhìn tổng thể biểu đồ **Training Progress** so sánh 4 map sizes, thấy rõ quy luật: map nhỏ hội tụ nhanh (average steps giảm sớm, cumulated rewards dốc hơn), map lớn cần nhiều thời gian hơn theo cấp số nhân. Điều này phù hợp với lý thuyết - khi state space tăng, Q-Learning cần exponentially nhiều samples hơn để hội tụ.
+![Training Progress](outputs/blackjack_training_progress.png)
 
+</details>
 
-## So sánh 2 bài
+<details>
+<summary>Learned Policy — Without Usable Ace</summary>
 
-| Điểm so sánh | Blackjack                      | FrozenLake                             |
-| ------------ | ------------------------------ | -------------------------------------- |
-| Q-table      | Dictionary (vì state là tuple) | Numpy array 2D (vì state là số nguyên) |
-| Epsilon      | Decay 1.0 xuống 0.1            | Cố định 0.1                            |
-| Số episodes  | 100,000                        | 2,000 x 20 runs                        |
-| Đánh giá     | 1,000 episodes greedy          | 100 episodes/map                       |
+![Policy No Ace](outputs/blackjack_policy_no_usable_ace.png)
 
-Em cố ý dùng 2 cách lưu Q-table khác nhau (dict vs array) và 2 chiến lược epsilon (decay vs cố định) để so sánh. Kết luận rút ra là epsilon decay cho kết quả tốt hơn vì agent explore nhiều lúc đầu rồi exploit dần, còn epsilon cố định thì bị giới hạn ở map lớn.
+</details>
+
+<details>
+<summary>Learned Policy — With Usable Ace</summary>
+
+![Policy Ace](outputs/blackjack_policy_usable_ace.png)
+
+</details>
+
+The learned policies closely match the theoretical **basic strategy** from Sutton & Barto's textbook.
+
+---
+
+## 🧊 FrozenLake Agent
+
+The agent learns to navigate a grid of frozen tiles (`F`), holes (`H`), a start (`S`), and a goal (`G`) — finding the safest path to the goal.
+
+### Hyperparameters
+
+| Parameter           | Value           |
+| ------------------- | --------------- |
+| Learning rate (α)   | `0.8`           |
+| Discount factor (γ) | `0.95`          |
+| Epsilon             | `0.1` (fixed)   |
+| Episodes per map    | `2,000`         |
+| Runs per map        | `20` (averaged) |
+| Slippery            | `False`         |
+
+### Multi-Map Scaling Experiment
+
+Trained across **4 map sizes** to study how Q-Learning scales with state space:
+
+| Map   | States | Win Rate   | Convergence                  |
+| ----- | ------ | ---------- | ---------------------------- |
+| 4×4   | 16     | ✅ High     | Fast (~few hundred episodes) |
+| 7×7   | 49     | ✅ Good     | Moderate                     |
+| 9×9   | 81     | ⚠️ Moderate | Slow                         |
+| 11×11 | 121    | ❌ 0%       | Insufficient episodes        |
+
+> **Key insight:** Q-Learning requires exponentially more samples as state space grows. The 11×11 map needs 10k–20k episodes or epsilon decay to converge.
+
+<details>
+<summary>Training Progress (All Maps)</summary>
+
+![FrozenLake Training](outputs/frozenlake_training_progress.png)
+
+</details>
+
+<details>
+<summary>Learned Policies</summary>
+
+|                    4×4                    |                    7×7                    |
+| :---------------------------------------: | :---------------------------------------: |
+| ![4x4](outputs/frozenlake_4x4_policy.png) | ![7x7](outputs/frozenlake_7x7_policy.png) |
+
+|                    9×9                    |                     11×11                     |
+| :---------------------------------------: | :-------------------------------------------: |
+| ![9x9](outputs/frozenlake_9x9_policy.png) | ![11x11](outputs/frozenlake_11x11_policy.png) |
+
+</details>
+
+---
+
+## Project Structure
+
+```
+.
+├── code/
+│   ├── blackjack_qlearning.py    # Blackjack agent (dict-based Q-table, epsilon decay)
+│   └── frozenlake_qlearning.py   # FrozenLake agent (numpy Q-table, fixed epsilon)
+├── outputs/                      # Generated charts and policy visualizations
+│   ├── blackjack_*.png
+│   └── frozenlake_*.png
+└── README.md
+```
+
+---
+
+## Tech Stack
+
+- **[Gymnasium](https://gymnasium.farama.org/)** — RL environment framework (successor to OpenAI Gym)
+- **[NumPy](https://numpy.org/)** — Q-table storage and numerical operations
+- **[Matplotlib](https://matplotlib.org/) + [Seaborn](https://seaborn.pydata.org/)** — Visualization (policy heatmaps, training curves)
+- **[pandas](https://pandas.pydata.org/)** — Results aggregation across runs
+- **[tqdm](https://tqdm.github.io/)** — Progress bars
+
+---
+
+## References
+
+- Sutton & Barto — *Reinforcement Learning: An Introduction* (2018)
+- [Gymnasium Blackjack Tutorial](https://gymnasium.farama.org/tutorials/training_agents/blackjack_q_learning/)
+- [Gymnasium FrozenLake Docs](https://gymnasium.farama.org/environments/toy_text/frozen_lake/)
+
