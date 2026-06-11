@@ -106,7 +106,7 @@ The learned policies closely match the theoretical **basic strategy** from Sutto
 
 ---
 
-## 🧊 FrozenLake Agent
+## FrozenLake Agent
 
 The agent learns to navigate a grid of frozen tiles (`F`), holes (`H`), a start (`S`), and a goal (`G`) — finding the safest path to the goal.
 
